@@ -20,35 +20,18 @@ func (p *PackService) SubmitPackSettings(packSizeSettings []int) []int {
 
 func (p *PackService) CalculatePacks(TotalNumberOfPacks int) ([]model.Pack, error) {
 	var packs []model.Pack
+	sort.Sort(sort.IntSlice(p.PackSizes))
+	width := TotalNumberOfPacks / p.PackSizes[0]
+	height := len(p.PackSizes)
 
-	sort.Sort(sort.Reverse(sort.IntSlice(p.PackSizes)))
-
-	for _, size := range p.PackSizes {
-		numPacks := TotalNumberOfPacks / size
-		if numPacks > 0 {
-			packs = append(packs, model.Pack{Size: size, Num: numPacks})
-			TotalNumberOfPacks -= numPacks * size
-		}
+	dp := make([][]int, height)
+	for i := range dp {
+		dp[i] = make([]int, width)
 	}
 
-	sort.Sort(sort.IntSlice(p.PackSizes))
-
-	if TotalNumberOfPacks > 0 {
-		for _, size := range p.PackSizes {
-			if size > TotalNumberOfPacks {
-				foundPackSize := false
-				for _, pack := range packs {
-					if pack.Size == size {
-						pack.Num += 1
-						foundPackSize = true
-					}
-				}
-
-				if !foundPackSize {
-					packs = append(packs, model.Pack{Size: size, Num: 1})
-					break
-				}
-			}
+	for i := 0; i < height; i++ {
+		for j := 0; j < width; j++ {
+			dp[i][j] = p.PackSizes[i] * i
 		}
 	}
 
