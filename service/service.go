@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"sort"
 	"test-app-repartners/model"
 )
@@ -32,8 +31,25 @@ func (p *PackService) CalculatePacks(TotalNumberOfPacks int) ([]model.Pack, erro
 		}
 	}
 
-	if TotalNumberOfPacks != 0 {
-		return nil, fmt.Errorf("unable to fulfill the order completely with available pack sizes")
+	sort.Sort(sort.IntSlice(p.PackSizes))
+
+	if TotalNumberOfPacks > 0 {
+		for _, size := range p.PackSizes {
+			if size > TotalNumberOfPacks {
+				foundPackSize := false
+				for _, pack := range packs {
+					if pack.Size == size {
+						pack.Num += 1
+						foundPackSize = true
+					}
+				}
+
+				if !foundPackSize {
+					packs = append(packs, model.Pack{Size: size, Num: 1})
+					break
+				}
+			}
+		}
 	}
 
 	return packs, nil
