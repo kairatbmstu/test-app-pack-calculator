@@ -42,6 +42,7 @@ func (p *PackService) CalculatePacks(TotalNumberOfPacks int) ([]model.Pack, erro
 		Height:             height,
 		Width:              width,
 		TotalNumberOfPacks: TotalNumberOfPacks,
+		MinSum:             TotalNumberOfPacks,
 		Stack:              stack,
 		Dp:                 dp,
 	}
@@ -49,6 +50,9 @@ func (p *PackService) CalculatePacks(TotalNumberOfPacks int) ([]model.Pack, erro
 	var result = algo.Start()
 
 	fmt.Println("result : ", result)
+	fmt.Println("stack : ", algo.Stack)
+	fmt.Println("MinSum : ", algo.MinSum)
+	fmt.Println("MinStack : ", algo.MinStack)
 
 	return packs, nil
 }
@@ -57,53 +61,61 @@ type Algorithm struct {
 	Height             int
 	Width              int
 	TotalNumberOfPacks int
+	MinSum             int
 	Stack              []int
+	MinStack           []int
 	Dp                 [][]int
 }
 
-func (a Algorithm) Start() bool {
+func (a *Algorithm) Start() bool {
 
 	for l := a.Width; l >= 0; l-- {
-		//if a.Dp[a.Height-1][l] <= a.TotalNumberOfPacks {
 		var found = a.Dfs(a.Height-1, l, a.TotalNumberOfPacks-a.Dp[a.Height-1][l])
 		fmt.Println("found: ", found)
 		if found {
 			return true
 		}
-		//}
 	}
 
 	return false
 }
 
-func (a Algorithm) Dfs(i int, j int, targetSum int) bool {
+func (a *Algorithm) Dfs(i int, j int, targetSum int) bool {
 	a.Stack = append(a.Stack, a.Dp[i][j]) //push item to stack
 	fmt.Println("stack: ", a.Stack)
 	fmt.Println("targetSum: ", targetSum)
 
 	if targetSum < 0 {
+		if len(a.Stack) > 0 {
+			a.Stack = a.Stack[:len(a.Stack)-1] // pop item from stack
+		}
 		return false
 	}
 
 	if i == 0 {
+		if targetSum <= a.MinSum {
+			a.MinSum = targetSum
+			a.MinStack = a.Stack[:]
+		}
 		if targetSum == 0 {
 			return true
+		}
+		if len(a.Stack) > 0 {
+			a.Stack = a.Stack[:len(a.Stack)-1] // pop item from stack
 		}
 		return false
 	}
 
 	for l := a.Width; l >= 0; l-- {
-		//if a.Dp[i][l] <= a.TotalNumberOfPacks {
 		var found = a.Dfs(i-1, l, targetSum-a.Dp[i-1][l])
 		//fmt.Println("found: ", found)
 		if found {
 			return true
-		} else {
-			if len(a.Stack) > 0 {
-				a.Stack = a.Stack[:len(a.Stack)] // pop item from stack
-			}
 		}
-		//}
+	}
+
+	if len(a.Stack) > 0 {
+		a.Stack = a.Stack[:len(a.Stack)-1] // pop item from stack
 	}
 
 	return false
