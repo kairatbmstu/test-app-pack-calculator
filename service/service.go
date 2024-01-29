@@ -36,11 +36,12 @@ func (p *PackService) CalculatePacks(TotalNumberOfPacks int) ([]model.Pack, erro
 		}
 	}
 
-	var stack = []int{}
+	var stack = []model.Pack{}
 
 	var algo = Algorithm{
 		Height:             height,
 		Width:              width,
+		PackSizes:          p.PackSizes,
 		TotalNumberOfPacks: TotalNumberOfPacks,
 		MinSum:             TotalNumberOfPacks,
 		Stack:              stack,
@@ -54,16 +55,21 @@ func (p *PackService) CalculatePacks(TotalNumberOfPacks int) ([]model.Pack, erro
 	fmt.Println("MinSum : ", algo.MinSum)
 	fmt.Println("MinStack : ", algo.MinStack)
 
+	if result {
+		return algo.MinStack, nil
+	}
+
 	return packs, nil
 }
 
 type Algorithm struct {
 	Height             int
 	Width              int
+	PackSizes          []int
 	TotalNumberOfPacks int
 	MinSum             int
-	Stack              []int
-	MinStack           []int
+	Stack              []model.Pack
+	MinStack           []model.Pack
 	Dp                 [][]int
 }
 
@@ -81,7 +87,7 @@ func (a *Algorithm) Start() bool {
 }
 
 func (a *Algorithm) Dfs(i int, j int, targetSum int) bool {
-	a.Stack = append(a.Stack, a.Dp[i][j]) //push item to stack
+	a.Stack = append(a.Stack, model.Pack{Size: a.PackSizes[i], Num: j}) //push item to stack
 	fmt.Println("stack: ", a.Stack)
 	fmt.Println("targetSum: ", targetSum)
 
