@@ -7,7 +7,7 @@ import (
 )
 
 var PackServiceBean = PackService{
-	PackSizes: []int{23, 51, 26},
+	PackSizes: []int{23, 31, 53},
 }
 
 type PackService struct {
@@ -46,7 +46,7 @@ func (p *PackService) CalculatePacks(TotalNumberOfPacks int) ([]model.Pack, erro
 		Dp:                 dp,
 	}
 
-	var result = algo.Start(TotalNumberOfPacks)
+	var result = algo.Start()
 
 	fmt.Println("result : ", result)
 
@@ -61,47 +61,49 @@ type Algorithm struct {
 	Dp                 [][]int
 }
 
-func (a Algorithm) Start(targetSum int) bool {
+func (a Algorithm) Start() bool {
 
 	for l := a.Width; l >= 0; l-- {
-		if a.Dp[a.Height-1][l] <= a.TotalNumberOfPacks {
-			var found = a.Dfs(a.Height-1, l, targetSum-a.Dp[a.Height-1][l])
-			fmt.Println("found: ", found)
-			if found {
-				return true
-			}
+		//if a.Dp[a.Height-1][l] <= a.TotalNumberOfPacks {
+		var found = a.Dfs(a.Height-1, l, a.TotalNumberOfPacks-a.Dp[a.Height-1][l])
+		fmt.Println("found: ", found)
+		if found {
+			return true
 		}
+		//}
 	}
 
 	return false
 }
 
 func (a Algorithm) Dfs(i int, j int, targetSum int) bool {
-	//fmt.Printf("i : %d  j : %d \n", i, j)
 	a.Stack = append(a.Stack, a.Dp[i][j]) //push item to stack
 	fmt.Println("stack: ", a.Stack)
+	fmt.Println("targetSum: ", targetSum)
+
+	if targetSum < 0 {
+		return false
+	}
+
 	if i == 0 {
-		diff := targetSum - a.Dp[i][j]
-		//fmt.Println("diff : %s", diff)
-		if diff == 0 {
+		if targetSum == 0 {
 			return true
 		}
-
 		return false
 	}
 
 	for l := a.Width; l >= 0; l-- {
-		if a.Dp[i][l] <= a.TotalNumberOfPacks {
-			var found = a.Dfs(i-1, l, targetSum-a.Dp[i][l])
-			//fmt.Println("found: ", found)
-			if found {
-				return true
-			} else {
-				if len(a.Stack) > 0 {
-					a.Stack = a.Stack[:len(a.Stack)] // pop item from stack
-				}
+		//if a.Dp[i][l] <= a.TotalNumberOfPacks {
+		var found = a.Dfs(i-1, l, targetSum-a.Dp[i-1][l])
+		//fmt.Println("found: ", found)
+		if found {
+			return true
+		} else {
+			if len(a.Stack) > 0 {
+				a.Stack = a.Stack[:len(a.Stack)] // pop item from stack
 			}
 		}
+		//}
 	}
 
 	return false
