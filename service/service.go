@@ -1,3 +1,4 @@
+// Package service provides functionality related to pack settings and calculations.
 package service
 
 import (
@@ -6,10 +7,12 @@ import (
 	"test-app-repartners/model"
 )
 
+// PackServiceBean is an instance of PackService with default PackSizes.
 var PackServiceBean = PackService{
 	PackSizes: []int{250, 500, 1000},
 }
 
+// Packs is a type representing a collection of model.Pack instances.
 type Packs []model.Pack
 
 // Len is the number of elements in the collection.
@@ -17,21 +20,7 @@ func (p Packs) Len() int {
 	return len(p)
 }
 
-// Less reports whether the element with index i
-// must sort before the element with index j.
-//
-// If both Less(i, j) and Less(j, i) are false,
-// then the elements at index i and j are considered equal.
-// Sort may place equal elements in any order in the final result,
-// while Stable preserves the original input order of equal elements.
-//
-// Less must describe a transitive ordering:
-//   - if both Less(i, j) and Less(j, k) are true, then Less(i, k) must be true as well.
-//   - if both Less(i, j) and Less(j, k) are false, then Less(i, k) must be false as well.
-//
-// Note that floating-point comparison (the < operator on float32 or float64 values)
-// is not a transitive ordering when not-a-number (NaN) values are involved.
-// See Float64Slice.Less for a correct implementation for floating-point values.
+// Less reports whether the element with index i must sort before the element with index j.
 func (p Packs) Less(i, j int) bool {
 	return p[i].Size < p[j].Size
 }
@@ -43,15 +32,19 @@ func (p Packs) Swap(i, j int) {
 	p[i] = tmp
 }
 
+// PackService is a service for handling pack-related operations.
 type PackService struct {
 	PackSizes []int
 }
 
+// SubmitPackSettings updates the PackSizes in PackService with the given packSizeSettings.
 func (p *PackService) SubmitPackSettings(packSizeSettings []int) []int {
 	p.PackSizes = packSizeSettings
 	return p.PackSizes
 }
 
+// CalculatePacks calculates the optimal distribution of packs for a given TotalNumberOfPacks.
+// It uses a dynamic programming approach to find the solution.
 func (p *PackService) CalculatePacks(TotalNumberOfPacks int) ([]model.Pack, error) {
 	sort.Sort(sort.IntSlice(p.PackSizes))
 	width := TotalNumberOfPacks / p.PackSizes[0]
@@ -96,6 +89,7 @@ func (p *PackService) CalculatePacks(TotalNumberOfPacks int) ([]model.Pack, erro
 	return algo.MinStack, nil
 }
 
+// Algorithm is a struct representing the state and parameters of the dynamic programming algorithm.
 type Algorithm struct {
 	Height             int
 	Width              int
@@ -107,6 +101,7 @@ type Algorithm struct {
 	Dp                 [][]int
 }
 
+// Start initiates the dfs algorithm and returns true if a valid solution is found.
 func (a *Algorithm) Start() bool {
 
 	for l := a.Width; l >= 0; l-- {
@@ -120,6 +115,7 @@ func (a *Algorithm) Start() bool {
 	return false
 }
 
+// Dfs is a recursive function used  to explore possible solutions.
 func (a *Algorithm) Dfs(i int, j int, targetSum int) bool {
 	a.Stack = append(a.Stack, model.Pack{Size: a.PackSizes[i], Num: j, DpCoords: model.DpCoords{I: i, J: j}}) //push item to stack
 	fmt.Println("stack: ", a.Stack)
@@ -162,6 +158,7 @@ func (a *Algorithm) Dfs(i int, j int, targetSum int) bool {
 	return false
 }
 
+// completeMinStack updates the MinStack to represent the optimal solution after the algorithm completes.
 func (a *Algorithm) completeMinStack() {
 	sort.Sort(a.MinStack)
 
