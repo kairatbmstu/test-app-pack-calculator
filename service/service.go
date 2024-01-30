@@ -52,11 +52,11 @@ func (p *PackService) CalculatePacks(TotalNumberOfPacks int) ([]model.Pack, erro
 
 	dp := make([][]int, height)
 	for i := range dp {
-		dp[i] = make([]int, width+1)
+		dp[i] = make([]int, width+2)
 	}
 
 	for i := 0; i < height; i++ {
-		for j := 0; j < width+1; j++ {
+		for j := 0; j < width+2; j++ {
 			dp[i][j] = p.PackSizes[i] * j
 		}
 	}
