@@ -1,3 +1,4 @@
+// Package controller defines HTTP handlers for managing package settings and calculations.
 package controller
 
 import (
@@ -6,7 +7,8 @@ import (
 	"test-app-repartners/service"
 )
 
-var GetPackageSettings = func(w http.ResponseWriter, r *http.Request) {
+// GetPackageSettings handles HTTP GET requests to retrieve current package settings.
+func GetPackageSettings(w http.ResponseWriter, r *http.Request) {
 	// Convert the struct to JSON
 	jsonData, err := json.Marshal(service.PackServiceBean.PackSizes)
 	if err != nil {
@@ -21,7 +23,8 @@ var GetPackageSettings = func(w http.ResponseWriter, r *http.Request) {
 	w.Write(jsonData)
 }
 
-var PostPackageSettings = func(w http.ResponseWriter, r *http.Request) {
+// PostPackageSettings handles HTTP POST requests to update package settings.
+func PostPackageSettings(w http.ResponseWriter, r *http.Request) {
 	var packSizeSettings []int
 	if err := json.NewDecoder(r.Body).Decode(&packSizeSettings); err != nil {
 		http.Error(w, "Invalid JSON format", http.StatusBadRequest)
@@ -44,7 +47,8 @@ var PostPackageSettings = func(w http.ResponseWriter, r *http.Request) {
 	w.Write(jsonData)
 }
 
-var CalculatePacks = func(w http.ResponseWriter, r *http.Request) {
+// CalculatePacks handles HTTP POST requests to calculate optimal pack distribution.
+func CalculatePacks(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var request struct {
 		TotalNumberOfPacks int `json:"totalNumberOfPacks"`
