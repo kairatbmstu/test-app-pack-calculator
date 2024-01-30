@@ -4,7 +4,9 @@ package controller
 import (
 	"encoding/json"
 	"net/http"
+	"test-app-repartners/model"
 	"test-app-repartners/service"
+	"text/template"
 )
 
 // GetPackageSettings handles HTTP GET requests to retrieve current package settings.
@@ -68,4 +70,31 @@ func CalculatePacks(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(packs)
+}
+
+type PageVariables struct {
+	PackSizes []int
+	Packs     []model.Pack
+}
+
+func GetIndexPage(w http.ResponseWriter, r *http.Request) {
+	// Define data to be passed to the template
+	data := PageVariables{
+		PackSizes: service.PackServiceBean.PackSizes,
+		Packs:     []model.Pack{},
+	}
+
+	// Parse the template file
+	tmpl, err := template.ParseFiles("template/index.html")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Execute the template, passing in the data
+	err = tmpl.Execute(w, data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }

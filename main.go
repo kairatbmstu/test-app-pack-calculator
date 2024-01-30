@@ -8,6 +8,10 @@ import (
 
 func main() {
 
+	http.Handle("/static", http.FileServer(http.Dir("./static")))
+
+	http.HandleFunc("/", controller.GetIndexPage)
+
 	http.HandleFunc("/submitPackSettings", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {
 			controller.GetPackageSettings(w, r)
