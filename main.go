@@ -12,12 +12,16 @@ func main() {
 
 	http.HandleFunc("/", controller.GetIndexPage)
 
-	http.HandleFunc("/submitPackSettings", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/getPackSettings", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {
 			controller.GetPackageSettings(w, r)
 			return
 		}
 
+		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+	})
+
+	http.HandleFunc("/submitPackSettings", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
 			controller.PostPackageSettings(w, r)
 			return

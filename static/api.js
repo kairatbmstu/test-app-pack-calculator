@@ -1,5 +1,5 @@
 async function getPackSettings() {
-    const url = 'http://localhost:8080/submitPackSettings';
+    const url = 'http://localhost:8080/getPackSettings';
 
     try {
         const response = await fetch(url, {
