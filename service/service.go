@@ -121,7 +121,7 @@ func (a *Algorithm) Start() bool {
 }
 
 func (a *Algorithm) Dfs(i int, j int, targetSum int) bool {
-	a.Stack = append(a.Stack, model.Pack{Size: a.PackSizes[i], Num: j}) //push item to stack
+	a.Stack = append(a.Stack, model.Pack{Size: a.PackSizes[i], Num: j, DpCoords: model.DpCoords{I: i, J: j}}) //push item to stack
 	fmt.Println("stack: ", a.Stack)
 	fmt.Println("targetSum: ", targetSum)
 
@@ -163,28 +163,21 @@ func (a *Algorithm) Dfs(i int, j int, targetSum int) bool {
 }
 
 func (a *Algorithm) completeMinStack() {
-	total := 0
-	for _, item := range a.MinStack {
-		total += item.Num * item.Size
-	}
-
-	diff := a.TotalNumberOfPacks - total
-
 	sort.Sort(a.MinStack)
 
-	for i, _ := range a.MinStack {
-		if a.MinStack[i].Size >= diff {
-			a.MinStack[i].Num += 1
-			break
-		}
+	rightVal := a.Dp[a.MinStack[0].DpCoords.I][a.MinStack[0].DpCoords.J+1]
+	bottomVal := a.Dp[a.MinStack[0].DpCoords.I+1][a.MinStack[0].DpCoords.J]
+
+	if rightVal == bottomVal {
+		a.MinStack[0].DpCoords.I += 1
+	} else if rightVal < bottomVal {
+		a.MinStack[0].DpCoords.J += 1
+	} else if rightVal > bottomVal {
+		a.MinStack[0].DpCoords.I += 1
 	}
+
+	a.MinStack[0].Num = a.MinStack[0].DpCoords.J
+	a.MinStack[0].Size = a.PackSizes[a.MinStack[0].DpCoords.I]
 
 	sort.Reverse(a.MinStack)
-}
-
-func (a *Algorithm) shrinkPacks() {
-	for _, pack := range a.MinStack {
-		itemsCount := pack.Num * pack.Size
-
-	}
 }
