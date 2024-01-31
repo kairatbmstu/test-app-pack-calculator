@@ -39,6 +39,12 @@ type PackService struct {
 
 // SubmitPackSettings updates the PackSizes in PackService with the given packSizeSettings.
 func (p *PackService) SubmitPackSettings(packSizeSettings []int) []int {
+	settings := make([]int, 0)
+	for _, packSize := range packSizeSettings {
+		if packSize > 0 {
+			settings = append(settings, packSize)
+		}
+	}
 	p.PackSizes = packSizeSettings
 	return p.PackSizes
 }

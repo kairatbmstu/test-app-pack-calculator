@@ -1,4 +1,16 @@
 $(function () {
+
+  $("#add-row-btn").click(function () {
+    // Get the last pack size value
+    var lastPackSize = 0;
+
+    // Create a new row with an input field, copying the last pack size value
+    var newRow = $("<tr>").html('<td><input type="number" name="packsize" value="' + lastPackSize + '" /></td>');
+
+    // Append the new row to the tbody
+    $("#packsizes").append(newRow);
+  });
+
   $("#submit-btn").click(function () {
     // Collect data from form inputs
     var packSizes = [];
@@ -18,6 +30,12 @@ $(function () {
         console.log(response);
         // Handle success response
         $("#packsizes").empty();
+
+        response.forEach(function (packSize) {
+          if (packSize > 0) {
+            $("#packsizes").append("<tr><td><input type=\"number\" name=\"packsize\" value=" + packSize + " /></td></tr>");
+          }
+        });
       },
       error: function (error) {
         console.error(error);
