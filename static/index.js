@@ -17,6 +17,7 @@ $(function () {
       success: function (response) {
         console.log(response);
         // Handle success response
+        $("#packsizes").empty();
       },
       error: function (error) {
         console.error(error);
@@ -42,9 +43,12 @@ $(function () {
       data: JSON.stringify(data),
       success: function (response) {
         // Update the table with the calculated packs
-       // $("tbody").html(""); // Clear existing rows
+        $("#calc-result").empty(); // Clear existing rows
+        console.log('response : ', response);
         response.forEach(function (pack) {
-          $("#pack-calculate-form > table > tbody").append("<tr><td>" + pack.num + "</td>" + "<td>" + pack.size + "</td></tr>");
+          if (pack.num > 0) {
+            $("#calc-result").append("<tr><td>" + pack.size + "</td>" + "<td>" + pack.num + "</td></tr>");
+          }
         });
       },
       error: function (error) {

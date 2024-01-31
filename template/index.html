@@ -17,16 +17,16 @@
                     </td>
                 </tr>
             </th>
-            <tbody>
+            <tbody id="packsizes">
                 {{range .PackSizes}}
                 <tr>
                     <td><input type="number" name="packsize" value="{{.}}" /></td>
                 </tr>
                 {{end}}
-                <tr>
-                    <td><button id="submit-btn" name="submit-btn" type="button">Submit Pack Settings</button></td>
-                </tr>
             </tbody>
+            <tr>
+                <td><button id="submit-btn" name="submit-btn" type="button">Submit Pack Settings</button></td>
+            </tr>
         </table>
     </form>
 
@@ -44,13 +44,19 @@
                         <button type="button" id="calculate-btn">Calculate packs</button>
                     </td>
                 </tr>
-            </th>
-            <tbody>
-                {{range .Packs}}
                 <tr>
-                    <td>{{.}}</td>
+                    <td>
+                        Size:
+                    </td>
+                    <td>
+                        Num:
+                    </td>
+                    <td>
+                    </td>
                 </tr>
-                {{end}}
+            </th>
+            <tbody id="calc-result">
+               
             </tbody>
         </table>
     </form>

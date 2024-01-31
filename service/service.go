@@ -81,12 +81,12 @@ func (p *PackService) CalculatePacks(TotalNumberOfPacks int) ([]model.Pack, erro
 	fmt.Println("MinStack : ", algo.MinStack)
 
 	if result {
-		return algo.Stack, nil
+		return algo.clearEmptyPacks(algo.Stack), nil
 	}
 
 	algo.completeMinStack()
 
-	return algo.MinStack, nil
+	return algo.clearEmptyPacks(algo.MinStack), nil
 }
 
 // Algorithm is a struct representing the state and parameters of the dynamic programming algorithm.
@@ -98,6 +98,7 @@ type Algorithm struct {
 	MinSum             int
 	Stack              Packs
 	MinStack           Packs
+	ResultStack        Packs
 	Dp                 [][]int
 }
 
@@ -135,6 +136,7 @@ func (a *Algorithm) Dfs(i int, j int, targetSum int) bool {
 			copy(a.MinStack, a.Stack)
 		}
 		if targetSum == 0 {
+			a.ResultStack = a.Stack
 			return true
 		}
 		if len(a.Stack) > 0 {
@@ -160,21 +162,55 @@ func (a *Algorithm) Dfs(i int, j int, targetSum int) bool {
 
 // completeMinStack updates the MinStack to represent the optimal solution after the algorithm completes.
 func (a *Algorithm) completeMinStack() {
+
 	sort.Sort(a.MinStack)
 
-	rightVal := a.Dp[a.MinStack[0].DpCoords.I][a.MinStack[0].DpCoords.J+1]
-	bottomVal := a.Dp[a.MinStack[0].DpCoords.I+1][a.MinStack[0].DpCoords.J]
+	if a.TotalNumberOfPacks > a.MinStack[0].Size {
+		rightVal := a.Dp[a.MinStack[0].DpCoords.I][a.MinStack[0].DpCoords.J+1]
+		bottomVal := a.Dp[a.MinStack[0].DpCoords.I+1][a.MinStack[0].DpCoords.J]
 
-	if rightVal == bottomVal {
-		a.MinStack[0].DpCoords.I += 1
-	} else if rightVal < bottomVal {
-		a.MinStack[0].DpCoords.J += 1
-	} else if rightVal > bottomVal {
-		a.MinStack[0].DpCoords.I += 1
+		if rightVal == bottomVal {
+			a.MinStack[0].DpCoords.I += 1
+		} else if rightVal < bottomVal {
+			a.MinStack[0].DpCoords.J += 1
+		} else if rightVal > bottomVal {
+			a.MinStack[0].DpCoords.I += 1
+		}
+
+		a.MinStack[0].Num = a.MinStack[0].DpCoords.J
+		a.MinStack[0].Size = a.PackSizes[a.MinStack[0].DpCoords.I]
+	} else {
+		a.MinStack[0].Num = 1
 	}
 
-	a.MinStack[0].Num = a.MinStack[0].DpCoords.J
-	a.MinStack[0].Size = a.PackSizes[a.MinStack[0].DpCoords.I]
-
 	sort.Reverse(a.MinStack)
+}
+
+func (a *Algorithm) aggregate() {
+	aggregat := make(map[int]int, 0)
+	for _, item := range a.MinStack {
+		_, ok := aggregat[item.Size]
+		if !ok {
+			aggregat[item.Size] = item.Num
+		} else {
+			aggregat[item.Size] += item.Num
+		}
+	}
+
+	a.ResultStack = make(Packs, 0)
+	for size, num := range aggregat {
+		a.ResultStack = append(a.ResultStack, model.Pack{Num: num, Size: size})
+	}
+}
+
+func (a *Algorithm) clearEmptyPacks(stack Packs) Packs {
+	packs := Packs{}
+
+	for _, pack := range stack {
+		if pack.Num > 0 {
+			packs = append(packs, pack)
+		}
+	}
+
+	return packs
 }
