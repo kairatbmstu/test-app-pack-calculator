@@ -47,16 +47,16 @@ func (p *PackService) SubmitPackSettings(packSizeSettings []int) []int {
 // It uses a dynamic programming approach to find the solution.
 func (p *PackService) CalculatePacks(TotalNumberOfPacks int) ([]model.Pack, error) {
 	sort.Sort(sort.IntSlice(p.PackSizes))
-	width := TotalNumberOfPacks / p.PackSizes[0]
-	height := len(p.PackSizes)
+	packsNumber := TotalNumberOfPacks / p.PackSizes[0]
+	packSizesNumber := len(p.PackSizes)
 
-	dp := make([][]int, height)
+	dp := make([][]int, packSizesNumber)
 	for i := range dp {
-		dp[i] = make([]int, width+2)
+		dp[i] = make([]int, packsNumber+2)
 	}
 
-	for i := 0; i < height; i++ {
-		for j := 0; j < width+2; j++ {
+	for i := 0; i < packSizesNumber; i++ {
+		for j := 0; j < packsNumber+2; j++ {
 			dp[i][j] = p.PackSizes[i] * j
 		}
 	}
@@ -64,8 +64,8 @@ func (p *PackService) CalculatePacks(TotalNumberOfPacks int) ([]model.Pack, erro
 	var stack = []model.Pack{}
 
 	var algo = Algorithm{
-		Height:             height,
-		Width:              width,
+		PackSizesNumber:    packSizesNumber,
+		PacksNumber:        packsNumber,
 		PackSizes:          p.PackSizes,
 		TotalNumberOfPacks: TotalNumberOfPacks,
 		MinSum:             TotalNumberOfPacks,
@@ -91,8 +91,8 @@ func (p *PackService) CalculatePacks(TotalNumberOfPacks int) ([]model.Pack, erro
 
 // Algorithm is a struct representing the state and parameters of the dynamic programming algorithm.
 type Algorithm struct {
-	Height             int
-	Width              int
+	PackSizesNumber    int
+	PacksNumber        int
 	PackSizes          []int
 	TotalNumberOfPacks int
 	MinSum             int
@@ -105,8 +105,8 @@ type Algorithm struct {
 // Start initiates the dfs algorithm and returns true if a valid solution is found.
 func (a *Algorithm) Start() bool {
 
-	for l := a.Width; l >= 0; l-- {
-		var found = a.Dfs(a.Height-1, l, a.TotalNumberOfPacks-a.Dp[a.Height-1][l])
+	for l := a.PacksNumber; l >= 0; l-- {
+		var found = a.Dfs(a.PackSizesNumber-1, l, a.TotalNumberOfPacks-a.Dp[a.PackSizesNumber-1][l])
 		fmt.Println("found: ", found)
 		if found {
 			return true
@@ -145,7 +145,7 @@ func (a *Algorithm) Dfs(i int, j int, targetSum int) bool {
 		return false
 	}
 
-	for l := a.Width; l >= 0; l-- {
+	for l := a.PacksNumber; l >= 0; l-- {
 		var found = a.Dfs(i-1, l, targetSum-a.Dp[i-1][l])
 		//fmt.Println("found: ", found)
 		if found {
@@ -169,12 +169,16 @@ func (a *Algorithm) completeMinStack() {
 		rightVal := a.Dp[a.MinStack[0].DpCoords.I][a.MinStack[0].DpCoords.J+1]
 		bottomVal := a.Dp[a.MinStack[0].DpCoords.I+1][a.MinStack[0].DpCoords.J]
 
-		if rightVal == bottomVal {
-			a.MinStack[0].DpCoords.I += 1
-		} else if rightVal < bottomVal {
+		if bottomVal > 0 {
+			if rightVal == bottomVal {
+				a.MinStack[0].DpCoords.I += 1
+			} else if rightVal < bottomVal {
+				a.MinStack[0].DpCoords.J += 1
+			} else if rightVal > bottomVal {
+				a.MinStack[0].DpCoords.I += 1
+			}
+		} else {
 			a.MinStack[0].DpCoords.J += 1
-		} else if rightVal > bottomVal {
-			a.MinStack[0].DpCoords.I += 1
 		}
 
 		a.MinStack[0].Num = a.MinStack[0].DpCoords.J
