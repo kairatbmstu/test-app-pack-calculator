@@ -1,38 +1,36 @@
 <html>
 
 <head>
-    <script src="/static/index.js" >
-        </script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
 
 <body>
     <h1>Pack Size Calculator Application:</h1>
 
-    <table>
-        <th>
-            <tr>
-                <td>
-                    Pack Sizes:
-                </td>
-            </tr>
+    <form id="pack-settings-form">
+        <table>
+            <th>
+                <tr>
+                    <td>
+                        Pack Sizes:
+                    </td>
+                </tr>
+            </th>
+            <tbody>
+                {{range .PackSizes}}
+                <tr>
+                    <td><input type="number" name="packsize" value="{{.}}" /></td>
+                </tr>
+                {{end}}
+                <tr>
+                    <td><button id="submit-btn" name="submit-btn" type="button">Submit Pack Settings</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
 
-        </th>
-        <tbody>
-            {{range .PackSizes}}
-            <tr>
-                <td>{{.}}</td>
-            </tr>
-            {{end}}
-            <tr>
-                <td>
-                    <input type="number" name="newpacksize" value="" />
-                </td>
-            </tr>
-        </tbody>
-
-    </table>
-
-    <form method="POST" action="/calculate">
+    <form method="POST" action="/calculate" id="pack-calculate-form">
         <table>
             <th>
                 <tr>
@@ -41,6 +39,9 @@
                     </td>
                     <td>
                         <input type="number" name="newpacksize" value="" />
+                    </td>
+                    <td>
+                        <button type="button" id="calculate-btn">Calculate packs</button>
                     </td>
                 </tr>
             </th>
@@ -53,9 +54,9 @@
             </tbody>
         </table>
     </form>
+
+    <script src="/static/index.js">
+    </script>
 </body>
 
 </html>
-
-
-
