@@ -30,9 +30,7 @@ func TestCalculatePacks(t *testing.T) {
 
 	totalNumberOfPacks := 2000
 	expectedResult := []model.Pack{
-		{Size: 250, Num: 4},
-		{Size: 500, Num: 2},
-		{Size: 1000, Num: 1},
+		{Size: 1000, Num: 2},
 	}
 
 	result, err := packService.CalculatePacks(totalNumberOfPacks)
@@ -46,7 +44,35 @@ func TestCalculatePacks(t *testing.T) {
 	}
 
 	for i, v := range result {
-		if v != expectedResult[i] {
+		if v.Size != expectedResult[i].Size || v.Num != expectedResult[i].Num {
+			t.Errorf("Expected %v at index %v, but got %v", expectedResult[i], i, v)
+		}
+	}
+}
+
+func TestCalculatePacks2(t *testing.T) {
+	packService := &PackService{
+		PackSizes: []int{23, 31, 53},
+	}
+
+	totalNumberOfPacks := 263
+	expectedResult := []model.Pack{
+		{Size: 31, Num: 7},
+		{Size: 23, Num: 2},
+	}
+
+	result, err := packService.CalculatePacks(totalNumberOfPacks)
+
+	if err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+
+	if len(result) != len(expectedResult) {
+		t.Errorf("Expected length of %v, but got %v", len(expectedResult), len(result))
+	}
+
+	for i, v := range result {
+		if v.Size != expectedResult[i].Size || v.Num != expectedResult[i].Num {
 			t.Errorf("Expected %v at index %v, but got %v", expectedResult[i], i, v)
 		}
 	}
