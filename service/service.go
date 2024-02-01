@@ -200,23 +200,6 @@ func (a *Algorithm) completeMinStack() {
 	sort.Reverse(a.MinStack)
 }
 
-func (a *Algorithm) aggregate() {
-	aggregat := make(map[int]int, 0)
-	for _, item := range a.MinStack {
-		_, ok := aggregat[item.Size]
-		if !ok {
-			aggregat[item.Size] = item.Num
-		} else {
-			aggregat[item.Size] += item.Num
-		}
-	}
-
-	a.ResultStack = make(Packs, 0)
-	for size, num := range aggregat {
-		a.ResultStack = append(a.ResultStack, model.Pack{Num: num, Size: size})
-	}
-}
-
 func (a *Algorithm) clearEmptyPacks(stack Packs) Packs {
 	packs := Packs{}
 
