@@ -15,12 +15,15 @@
                     <td>
                         Pack Sizes:
                     </td>
+                    <td>
+                    </td>
                 </tr>
             </th>
             <tbody id="packsizes">
                 {{range .PackSizes}}
                 <tr>
                     <td><input type="number" name="packsize" value="{{.}}" /></td>
+                    <td><button class="delete-row-btn" type="button">Delete</button></td>
                 </tr>
                 {{end}}
             </tbody>

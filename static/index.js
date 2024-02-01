@@ -1,11 +1,15 @@
 $(function () {
 
+  $("#packsizes").on("click", ".delete-row-btn", function () {
+    $(this).closest("tr").remove();
+  });
+
   $("#add-row-btn").click(function () {
     // Get the last pack size value
     var lastPackSize = 0;
 
     // Create a new row with an input field, copying the last pack size value
-    var newRow = $("<tr>").html('<td><input type="number" name="packsize" value="' + lastPackSize + '" /></td>');
+    var newRow = $("<tr>").html('<td><input type="number" name="packsize" value="' + lastPackSize + '" /><td><button class=\"delete-row-btn\" type=\"button\">Delete</button></td></td>');
 
     // Append the new row to the tbody
     $("#packsizes").append(newRow);
@@ -33,7 +37,9 @@ $(function () {
 
         response.forEach(function (packSize) {
           if (packSize > 0) {
-            $("#packsizes").append("<tr><td><input type=\"number\" name=\"packsize\" value=" + packSize + " /></td></tr>");
+            $("#packsizes")
+            .append("<tr><td><input type=\"number\" name=\"packsize\" value=" + packSize + " />" + 
+            "</td><td><button class=\"delete-row-btn\" type=\"button\">Delete</button></td></tr>");
           }
         });
       },
