@@ -37,15 +37,19 @@ type PackService struct {
 	PackSizes []int
 }
 
-// SubmitPackSettings updates the PackSizes in PackService with the given packSizeSettings.
+// SubmitPackSettings updates the PackSizes in PackService with the given packSizeSettings, and deduplicate duplicate values.
 func (p *PackService) SubmitPackSettings(packSizeSettings []int) []int {
-	settings := make([]int, 0)
+	uniqueSettings := make(map[int]bool)
+	deduplicatedSettings := make([]int, 0)
+
 	for _, packSize := range packSizeSettings {
-		if packSize > 0 {
-			settings = append(settings, packSize)
+		if packSize > 0 && !uniqueSettings[packSize] {
+			uniqueSettings[packSize] = true
+			deduplicatedSettings = append(deduplicatedSettings, packSize)
 		}
 	}
-	p.PackSizes = packSizeSettings
+
+	p.PackSizes = deduplicatedSettings
 	return p.PackSizes
 }
 
