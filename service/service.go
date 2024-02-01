@@ -9,7 +9,7 @@ import (
 
 // PackServiceBean is an instance of PackService with default PackSizes.
 var PackServiceBean = PackService{
-	PackSizes: []int{250, 500, 1000},
+	PackSizes: []int{23, 31, 53},
 }
 
 // Packs is a type representing a collection of model.Pack instances.
